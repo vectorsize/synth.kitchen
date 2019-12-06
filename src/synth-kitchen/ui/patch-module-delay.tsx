@@ -5,6 +5,7 @@ import { modules } from '../state/module-map';
 import { Parameter } from './patch-module-parameter';
 import { Connector } from './patch-connector';
 import { uniqueId } from '../io/utils/unique-id';
+import { PatchContext } from './patch';
 
 const scaleDelay = (normalizedValue: number): number => {
 	return Math.min(100, Math.max(0, normalizedValue * 100));
@@ -15,6 +16,7 @@ const displayDelay = (currentValue: number) => {
 }
 
 export const Delay: React.FunctionComponent<IModuleProps> = props => {
+	const { parameterChange } = React.useContext(PatchContext);
 	const [inputId] = React.useState(uniqueId() as any);
 	const [outputId] = React.useState(uniqueId() as any);
 	const [delayId] = React.useState(uniqueId() as any);
@@ -48,6 +50,7 @@ export const Delay: React.FunctionComponent<IModuleProps> = props => {
 
 	const handleChangeDelay = React.useCallback((newDelay: number) => {
 		(module as any).node.delayTime.value = newDelay;
+		parameterChange(module.moduleKey, delayId, newDelay);
 		setDelay(newDelay);
 	}, [module]);
 

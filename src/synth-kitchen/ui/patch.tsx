@@ -23,12 +23,14 @@ export interface IPatchCallbacks {
 	moduleAdd: (moduleType: ModuleType, rackIndex: number, slotIndex: number) => void;
 	moduleRackRemove: (rackIndex: number) => void;
 	moduleRemove: (moduleKey: string) => void;
+	parameterChange: (moduleKey: string, parameterId: string, newValue: any) => void;
 }
 
 export interface IPatchState {
 	active?: IEnd;
 	connections: IConnection[];
 	racks: IRack[];
+	actions: any[];
 }
 
 export const PatchContext = React.createContext<IPatchCallbacks & IPatchState>(
@@ -40,8 +42,10 @@ export const PatchContext = React.createContext<IPatchCallbacks & IPatchState>(
 		moduleAdd: () => null,
 		moduleRackRemove: () => null,
 		moduleRemove: () => null,
+		parameterChange: () => null,
 		connections: [],
-		racks: []
+		racks: [],
+		actions: []
 	}
 )
 
@@ -51,7 +55,8 @@ export class Patch extends React.Component<{}, IPatchState> {
 
 		this.state = {
 			connections: [],
-			racks: [{ index: 0, moduleKeys: [] }]
+			racks: [{ index: 0, moduleKeys: [] }],
+			actions: []
 		};
 	}
 
@@ -88,6 +93,7 @@ export class Patch extends React.Component<{}, IPatchState> {
 			moduleAdd: this.moduleAdd,
 			moduleRackRemove: this.moduleRackRemove,
 			moduleRemove: this.moduleRemove,
+			parameterChange: this.parameterChange,
 			...this.state
 		};
 	}
@@ -95,6 +101,9 @@ export class Patch extends React.Component<{}, IPatchState> {
 	render() {
 		return (
 			<PatchContext.Provider value={this.getContextValue()}>
+				<button type="button" onClick={() => { console.log([...this.state.actions]); }}>
+					log actions
+				</button>
 				<Connector type="SIGNAL_IN" name={'speakers'} connectorId={'GLOBAL_CONTEXT'} moduleKey={'GLOBAL_CONTEXT'} />
 				{this.state.racks.map(rack => (
 					<React.Fragment key={rack.index}>
@@ -108,23 +117,43 @@ export class Patch extends React.Component<{}, IPatchState> {
 	}
 
 	connectorActivate = (active: IEnd) => {
-		this.setState({ active });
+		const { actions } = this.state;
+		actions.push({
+			action: 'connectorActivate',
+			payload: active
+		});
+		this.setState({ active, actions });
 	}
 
 	connectorDeactivate = () => {
-		this.setState({ active: undefined });
+		const { actions } = this.state;
+		actions.push({
+			action: 'connectorDeactivate'
+		});
+		this.setState({ active: undefined, actions });
 	}
 
 	connectorConnect = (payload: IConnectPayload) => {
+		const { actions } = this.state;
+		actions.push({
+			action: 'connectorConnect',
+			payload
+		});
 		const { connection, sourceConnector, destinationConnector } = payload;
 		sourceConnector.getter().connect(destinationConnector.getter());
 		this.setState({
 			active: undefined,
-			connections: [...this.state.connections, connection]
+			connections: [...this.state.connections, connection],
+			actions
 		});
 	}
 
 	connectorDisconnect = (payload: IConnectPayload) => {
+		const { actions } = this.state;
+		actions.push({
+			action: 'connectorDisconnect',
+			payload
+		});
 		const { connection, sourceConnector, destinationConnector } = payload;
 		sourceConnector.getter().disconnect(destinationConnector.getter());
 		const connections = this.state.connections.filter(con => (
@@ -133,11 +162,21 @@ export class Patch extends React.Component<{}, IPatchState> {
 		));
 		this.setState({
 			active: undefined,
-			connections
+			connections,
+			actions
 		});
 	}
 
 	moduleAdd = (moduleType: ModuleType, rackIndex: number, slotIndex: number) => {
+		const { actions } = this.state;
+		actions.push({
+			action: 'moduleAdd',
+			payload: {
+				moduleType,
+				rackIndex,
+				slotIndex
+			}
+		});
 
 		let moduleKey = '';
 
@@ -167,11 +206,16 @@ export class Patch extends React.Component<{}, IPatchState> {
 		} else {
 			this.state.racks[rackIndex].moduleKeys.splice(slotIndex, 0, moduleKey);
 		}
-		this.setState({ racks: [...racks] });
+		this.setState({ racks: [...racks], actions });
 
 	}
 
 	moduleClear = (module: IModule) => {
+		const { actions } = this.state;
+		actions.push({
+			action: 'moduleClear',
+			payload: module
+		});
 		this.state.connections.forEach(connection => {
 			if (connection.source.moduleKey === module.moduleKey || connection.destination.moduleKey === module.moduleKey) {
 				const sourceModule = modules.get(connection.source.moduleKey);
@@ -191,11 +235,17 @@ export class Patch extends React.Component<{}, IPatchState> {
 		});
 		modules.delete(module.moduleKey);
 		this.setState({
-			active: undefined
+			active: undefined,
+			actions
 		});
 	}
 
 	moduleRackAdd = () => {
+		const { actions } = this.state;
+		actions.push({
+			action: 'moduleRackAdd'
+		});
+
 		let { racks } = this.state;
 
 		racks.push({
@@ -204,12 +254,18 @@ export class Patch extends React.Component<{}, IPatchState> {
 		});
 
 		this.setState({
-			racks
+			racks,
+			actions
 		});
 	}
 
 	moduleRackRemove = (rackIndex: number) => {
 		return () => {
+			const { actions } = this.state;
+			actions.push({
+				action: 'moduleRackRemove',
+				payload: rackIndex
+			});
 
 			let { racks } = this.state;
 
@@ -227,7 +283,10 @@ export class Patch extends React.Component<{}, IPatchState> {
 			});
 
 			/* clean up the modules in the removed rack */
-			this.setState({ racks: racks.length > 0 ? racks : [{ index: 0, moduleKeys: [] }] }, () => {
+			this.setState({
+				racks: racks.length > 0 ? racks : [{ index: 0, moduleKeys: [] }],
+				actions
+			}, () => {
 				remove.forEach(key => this.moduleRemove(key));
 			});
 
@@ -235,6 +294,12 @@ export class Patch extends React.Component<{}, IPatchState> {
 	}
 
 	moduleRemove = (moduleKey: string) => {
+		const { actions } = this.state;
+		actions.push({
+			action: 'moduleRemove',
+			payload: moduleKey
+		});
+
 		const module = modules.get(moduleKey);
 		if (module) {
 
@@ -250,10 +315,26 @@ export class Patch extends React.Component<{}, IPatchState> {
 			}));
 
 			/* clear the module */
-			this.setState({ racks }, () => {
+			this.setState({
+				racks,
+				actions
+			}, () => {
 				this.moduleClear(module);
 			});
 
 		}
+	}
+
+	parameterChange = (moduleId: string, parameterId: string, newValue: any) => {
+		const { actions } = this.state;
+		actions.push({
+			action: 'parameterChange',
+			payload: {
+				moduleId,
+				parameterId,
+				newValue
+			}
+		});
+		this.setState({ actions });
 	}
 }

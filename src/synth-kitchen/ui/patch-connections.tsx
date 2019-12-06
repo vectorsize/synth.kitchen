@@ -37,6 +37,7 @@ export const Connection: React.FunctionComponent<IConnectionProps> = (props) => 
 
 /** Connections */
 export interface ICable {
+	active?: boolean;
 	sourceX: number;
 	sourceY: number;
 	destinationX: number;
@@ -84,7 +85,8 @@ export class Connections extends React.Component<IConnectionsProps, IConnections
 	componentDidUpdate = (prevProps: IConnectionsProps, prevState: IConnectionsState) => {
 		if ((prevProps.moduleCount !== this.props.moduleCount) ||
 			(prevProps.rackCount !== this.props.rackCount) ||
-			(prevProps.connections.length !== this.props.connections.length)) {
+			(prevProps.connections.length !== this.props.connections.length) ||
+			(!prevProps.active && this.props.active)) {
 			this.updateCables();
 		}
 		if ((prevProps.moduleCount !== this.props.moduleCount) ||
@@ -141,7 +143,7 @@ export class Connections extends React.Component<IConnectionsProps, IConnections
 	updateCables = () => {
 		this.updateCanvasSize();
 		this.setState({
-			cables: getConnectionCables(this.props.connections)
+			cables: getConnectionCables(this.props.connections, this.props.active)
 		});
 	}
 
@@ -241,12 +243,13 @@ function getMouseCable(event: MouseEvent, activeId: string): ICable | undefined 
 	}
 }
 
-function getConnectionCables(connections: IConnection[]) {
+function getConnectionCables(connections: IConnection[], active?: IEnd) {
 	const cables: ICable[] = [];
 	connections.forEach(connection => {
 		const source = document.getElementById(connection.source.connectorId) as HTMLButtonElement;
 		const destination = document.getElementById(connection.destination.connectorId) as HTMLButtonElement;
 		if (source && destination) {
+			const activeCable = active && (active.connectorId === connection.source.connectorId || active.connectorId === connection.destination.connectorId);
 			const sourceBoundingClientRect = source.getBoundingClientRect();
 			const destinationBoundingClientRect = destination.getBoundingClientRect();
 			const sourceX = sourceBoundingClientRect.left + sourceBoundingClientRect.width / 2 + window.pageXOffset;
@@ -255,6 +258,7 @@ function getConnectionCables(connections: IConnection[]) {
 			const destinationY = destinationBoundingClientRect.top + destinationBoundingClientRect.height / 2 + window.pageYOffset;
 
 			cables.push({
+				active: active && !activeCable ? false : activeCable ? true : undefined,
 				sourceX,
 				sourceY,
 				destinationX,

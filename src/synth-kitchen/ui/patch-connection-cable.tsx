@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 export interface IConnectorCableProps {
+	active?: boolean;
 	context: CanvasRenderingContext2D;
 	sourceX: number;
 	sourceY: number;
@@ -13,11 +14,11 @@ export interface IConnectorCableProps {
 	type: string;
 }
 
-export const ConnectorCable: React.FunctionComponent<IConnectorCableProps> = ({ context, sourceX, sourceY, cp1x, cp1y, cp2x, cp2y, destinationX, destinationY, type }) => {
+export const ConnectorCable: React.FunctionComponent<IConnectorCableProps> = ({ active, context, sourceX, sourceY, cp1x, cp1y, cp2x, cp2y, destinationX, destinationY, type }) => {
 	context.beginPath();
 	context.moveTo(sourceX, sourceY);
 	context.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, destinationX, destinationY);
-	context.strokeStyle = '#fff';
+	context.strokeStyle = active === undefined || active ? '#fff' : 'rgba(0,0,0,0.2)';
 	context.lineWidth = 6;
 	context.stroke();
 	context.beginPath();
