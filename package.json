@@ -17,7 +17,7 @@
     "standardized-audio-context": "^24.1.20",
     "typescript": "^3.9.5",
     "uuid": "^3.3.3",
-    "webmidi": "^2.5.1"
+    "webmidi": "^3.0.0-alpha.2"
   },
   "scripts": {
     "start": "react-scripts start",

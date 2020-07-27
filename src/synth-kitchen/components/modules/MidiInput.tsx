@@ -1,5 +1,4 @@
 import * as React from 'react';
-import webmidi from 'webmidi';
 
 import { MidiOutput } from '../../io/midi/midi-output';
 import { IModuleProps } from './BaseModuleOld';
@@ -7,6 +6,8 @@ import { modules } from '../../state/module-map';
 import { Connector } from './shared/Connector';
 import { Setting } from './shared/Setting';
 import { uniqueId } from '../../io/utils/unique-id';
+
+const { WebMidi } = require("webmidi");
 
 const channelOptions: [string, string][] = [
 	['all', 'all'],
@@ -30,7 +31,7 @@ const channelOptions: [string, string][] = [
 
 export const MidiInput: React.FunctionComponent<IModuleProps> = props => {
 	const [outputId] = React.useState(uniqueId() as any);
-	const [inputDevices] = React.useState(webmidi.inputs);
+	const [inputDevices] = React.useState(WebMidi.inputs);
 	const [inputDevice, setInputDevice] = React.useState('');
 	const [inputChannel, setInputChannel] = React.useState('all');
 	const [module] = React.useState(modules.get(props.moduleKey));

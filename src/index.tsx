@@ -5,10 +5,15 @@ import './main.css';
 
 import { Kitchen } from './synth-kitchen/kitchen';
 
+const { WebMidi } = require("webmidi");
+
 const appRoot = document.getElementById('root') as HTMLElement;
 
-ReactDOM.render(
-    <Kitchen />,
-    appRoot
-);
+WebMidi.enable().then(() => {/* alrighty then */ }).catch(() => {/* cry about it */ }).finally(() => {
+    ReactDOM.render(
+        <Kitchen />,
+        appRoot
+    );
+});
+
 

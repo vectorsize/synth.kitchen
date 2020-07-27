@@ -1,5 +1,5 @@
 import * as React from 'react';
-import webmidi from '../../io/utils/webmidi';
+const { WebMidi } = require("webmidi");
 
 export interface IAddModuleProps {
     handleNewModuleTypeChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
@@ -53,7 +53,7 @@ export class AddModule extends React.Component<IAddModuleProps, IAddModuleState>
                     <option value={'FILTER'}>filter</option>
                     <option value={'OSCILLATOR'}>oscillator</option>
                     <option value={'SEQUENCER'}>sequencer</option>
-                    {webmidi.inputs.length > 0 ?
+                    {WebMidi.inputs.length > 0 ?
                         (
                             <>
                                 <option value={'MIDI_DEVICE'}>midi device</option>
