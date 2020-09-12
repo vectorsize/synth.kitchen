@@ -1,0 +1,77 @@
+{
+  "nodes": [
+    {
+      "id": 1,
+      "type": "OscillatorNode",
+      "parameters": [
+        {
+          "name": "frequency",
+          "value": 100
+        },
+        {
+          "name": "type",
+          "value": "square"
+        },
+        {
+          "name": "detune",
+          "value": 12
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "GainNode",
+      "parameters": [
+        {
+          "name": "gain",
+          "value": 0.2
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "GainNode",
+      "parameters": [
+        {
+          "name": "gain",
+          "value": 20
+        }
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "source": {
+        "id": 1
+      },
+      "target": {
+        "id": 2
+      }
+    },
+    {
+      "source": {
+        "id": 2
+      },
+      "target": {
+        "id": 0
+      }
+    },
+    {
+      "source": {
+        "id": 1
+      },
+      "target": {
+        "id": 3
+      }
+    },
+    {
+      "source": {
+        "id": 3
+      },
+      "target": {
+        "id": 1,
+        "parameter": "frequency"
+      }
+    }
+  ]
+}
