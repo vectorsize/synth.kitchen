@@ -1,4 +1,17 @@
-.infinite-grid {
+.grid-wrapper {
+  position: relative;
+}
+
+.grid-wrapper .grid-module {
+  position: absolute;
+  box-sizing: border-box;
+  background-color: #53B3CB;
+  border-top: 16px solid #A7C4C2;
+  width: 64px;
+  height: 64px;
+}
+
+.grid {
   box-sizing: border-box;
   min-height: 100vh;
   min-width: 100vw;
@@ -7,7 +20,7 @@
   grid-template-rows: repeat(auto-fill, 16px);
 }
 
-.infinite-grid .dot {
+.grid .dot {
   padding: 0;
   border-width: 0;
   background-color: transparent;
@@ -17,7 +30,7 @@
   align-items: center;
 }
 
-.infinite-grid .dot span {
+.grid .dot span {
   display: block;
   width: 15%;
   height: 15%;
@@ -25,8 +38,8 @@
   transition: width 0.25s ease-out, height 0.25s ease-out, border-radius 0.25s ease-out, background-color 0.25s ease-out;
 }
 
-.infinite-grid .dot:hover span,
-.infinite-grid .dot:focus span {
+.grid .dot:hover span,
+.grid .dot:focus span {
   width: 66%;
   height: 66%;
   border-radius: 50%;
@@ -35,8 +48,8 @@
 }
 
 /* 
-.infinite-grid .dot:hover,
-.infinite-grid .dot:focus {
+.grid .dot:hover,
+.grid .dot:focus {
   border: 8px solid #EF946C;
   transform: translate(-25%, -25%);
   margin-right: 0;
