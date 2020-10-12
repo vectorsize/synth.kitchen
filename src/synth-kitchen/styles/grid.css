@@ -1,0 +1,44 @@
+.infinite-grid {
+  box-sizing: border-box;
+  min-height: 100vh;
+  min-width: 100vw;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 16px);
+  grid-template-rows: repeat(auto-fill, 16px);
+}
+
+.infinite-grid .dot {
+  padding: 0;
+  border-width: 0;
+  background-color: transparent;
+  box-sizing: content-box;
+  display: grid;
+  justify-items: center;
+  align-items: center;
+}
+
+.infinite-grid .dot span {
+  display: block;
+  width: 15%;
+  height: 15%;
+  background-color: #F15946;
+  transition: width 0.25s ease-out, height 0.25s ease-out, border-radius 0.25s ease-out, background-color 0.25s ease-out;
+}
+
+.infinite-grid .dot:hover span,
+.infinite-grid .dot:focus span {
+  width: 66%;
+  height: 66%;
+  border-radius: 50%;
+  background-color: #F9C22E;
+  transition: none;
+}
+
+/* 
+.infinite-grid .dot:hover,
+.infinite-grid .dot:focus {
+  border: 8px solid #EF946C;
+  transform: translate(-25%, -25%);
+  margin-right: 0;
+  margin-bottom: 0;
+} */
