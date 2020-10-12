@@ -2,10 +2,10 @@ import * as React from 'react';
 
 import { Connections } from './connections/Connection';
 import { Connector } from './modules/shared/Connector';
-import { ModuleType, IModule, IConnector } from '../state/patch';
+import { ModuleType, IModule, IConnector } from '../state/patch_legacy';
 import { modules } from '../state/module-map';
 import { Rack, IRack } from './Rack';
-import { IEnd, IConnection } from '../state/patch';
+import { IEnd, IConnection } from '../state/patch_legacy';
 import { uniqueId } from '../io/unique-id';
 import { Serializer } from './Serializer';
 

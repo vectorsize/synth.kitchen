@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IConnection, ConnectionType, IEnd } from '../../state/patch';
+import { IConnection, ConnectionType, IEnd } from '../../state/patch_legacy';
 import { ConnectionCable } from './ConnectionCable';
 import { ConnectionCircle } from './ConnectionCircle';
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { Patch } from '../components/Patch';
+import { Patch } from '../components/Patch_legacy';
 
 import '../styles/patch.css';
 

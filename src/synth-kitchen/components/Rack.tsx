@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { BaseModuleOld } from './modules/BaseModuleOld';
 import { AddModule } from './modules/AddModule';
-import { ModuleType } from '../state/patch';
+import { ModuleType } from '../state/patch_legacy';
 
 export interface IRack {
 	index: number;

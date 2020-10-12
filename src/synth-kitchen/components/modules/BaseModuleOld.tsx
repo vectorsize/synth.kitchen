@@ -8,7 +8,7 @@ import { MidiInput } from './MidiInput';
 import { Oscillator } from './Oscillator';
 import { Sequencer } from './Sequencer';
 import { MidiOscillator } from './MidiOscillator';
-import { ModuleType } from '../../state/patch';
+import { ModuleType } from '../../state/patch_legacy';
 
 export type ConnectorType = 'CV_IN' | 'SIGNAL_IN' | 'SIGNAL_OUT' | 'MIDI_IN' | 'MIDI_OUT' | 'uninitialized';
 

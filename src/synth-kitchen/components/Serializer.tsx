@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { modules } from '../state/module-map';
-import { PatchContext } from './Patch';
+import { PatchContext } from './Patch_legacy';
 
 export const Serializer: React.FunctionComponent = () => {
 	const { racks, connections } = React.useContext(PatchContext);
